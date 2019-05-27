@@ -25,11 +25,10 @@ public class DynamicSphere : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Memo.range = _range;
-
+        Memo.CalculateSwarm(memos);
         for (int i = 0; i < memoCount; i++)
         {
-            memos[i].Place();
+            memos[i].Move();
         }
     }
 }
