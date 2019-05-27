@@ -5,15 +5,15 @@ using UnityEngine;
 public class Memo
 {
     // shared
-    static float maxRadius = 0.5f;
+    static float maxRadius = 0.2f;
     static float averageHeight = 0.5f;
-    public static float range = 4.0f;
+    public static float range = 0.2f;
 
-    public static float maximumDist = 2.0f;
-    public static float minimumDist = 0.3f;
+    public static float maximumDist = 0.3f;
+    public static float minimumDist = 0.05f;
 
     public static Vector3 nucleus = Vector3.zero;
-
+    public static float centerStrength = 1.0f;
     // self
     public GameObject obj;
     public Vector3 pos = Vector3.zero;
@@ -33,8 +33,7 @@ public class Memo
 
     // inter
     public Vector3 interForce = Vector3.zero;
-    public Memo targetMem = null;
-
+    public Vector3 target = Vector3.zero;
     public int id;
 
     // limited resources
@@ -89,10 +88,14 @@ public class Memo
             
         y += averageHeight;
         origin = new Vector3(x, y, z);
-        obj.transform.position = origin;
-        pos = origin;
+        pos = origin + nucleus;
 
-        m = Random.Range(0.003f, 0.01f);
+        obj.transform.position = pos;
+
+        m = Random.Range(0.01f, 0.03f);
+        obj.transform.localScale = new Vector3(m,m,m);
+
+        target = nucleus;
     }
 
     // reset when not grabbing
@@ -108,7 +111,6 @@ public class Memo
         foreach (Memo memo in _memos)
         {
             memo.interForce = Vector3.zero;
-            memo.targetMem = null;
         }
 
         for (int j = 0; j < _memos.Count; ++j)
@@ -139,7 +141,6 @@ public class Memo
             memo.attractSteer = Vector3.zero;
 
             memo.interForce = Vector3.zero;
-            memo.targetMem = null;
         }
 
         for (int j = 0; j < _memos.Count; ++j)
@@ -151,7 +152,7 @@ public class Memo
                 float d = dm.magnitude;
                 dm.Normalize();
 
-                if (d < 0.1f) d = 0.1f;
+                if (d < 0.05f) d = 0.05f;
 
                 // too far away, attract
                 if (d > maximumDist)
@@ -190,29 +191,45 @@ public class Memo
 
     public void TrackNucleus()
     {
-        Vector3 dm = nucleus - pos;
+        target = target * (1.0f - 0.3f) + nucleus * 0.3f;
+
+        Vector3 dm = target - pos;
         float d = dm.magnitude;
+        if (d > 0.1f)
+        {
+            Vector3 f = dm * (Mathf.Exp(-0.001f * d * d) / d) * 15.0f;
+            interForce += f;
+        }
 
 
-        //dm.Normalize();
-
-        Vector3 f = dm * (Mathf.Exp(-0.00001f * d * d) / d) * 0.5f;
-        interForce += f;
     }
 
+
+    public void Update()
+    {
+        Vector3 dist = pos - nucleus;
+        if (dist.magnitude > 3.0f)
+        {
+            Place();
+        }
+        else
+        {
+            Move();
+        }
+    }
 
     public void Move()
     {
         vel *= 0.8f;
         acc += interForce * m;
         vel += acc;
-        if (vel.magnitude > 2.0f)
+        if (vel.magnitude > 1.0f)
         {
             vel.Normalize();
-            vel *= 2.0f;
         }
 
         pos += vel * 0.08f;
+        Debug.Log(vel.magnitude);
         obj.transform.position = pos;
     }
 
