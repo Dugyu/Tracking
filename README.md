@@ -16,3 +16,4 @@ Calculate grab strength using hand joints/palm/finger tip positions.
 Use this strength to change color/range of particles.
 
 Step4  Spatial Anchor
+https://docs.microsoft.com/en-us/azure/spatial-anchors/quickstarts/get-started-unity-hololens
