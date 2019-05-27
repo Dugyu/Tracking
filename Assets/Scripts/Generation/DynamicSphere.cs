@@ -9,6 +9,7 @@ public class DynamicSphere : MonoBehaviour
     public GameObject memoGraphic;
 
     public float _range;
+    public Transform _center;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +26,7 @@ public class DynamicSphere : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Memo.nucleus = _center.position;
         Memo.CalculateSwarm(memos);
         for (int i = 0; i < memoCount; i++)
         {

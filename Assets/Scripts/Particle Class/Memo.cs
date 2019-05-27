@@ -12,7 +12,7 @@ public class Memo
     public static float maximumDist = 2.0f;
     public static float minimumDist = 0.3f;
 
-
+    public static Vector3 nucleus = Vector3.zero;
 
     // self
     public GameObject obj;
@@ -92,7 +92,7 @@ public class Memo
         obj.transform.position = origin;
         pos = origin;
 
-        m = Random.Range(1.0f, 2.0f);
+        m = Random.Range(0.003f, 0.01f);
     }
 
     // reset when not grabbing
@@ -100,7 +100,6 @@ public class Memo
     {
 
     }
-
     
 
     public static void CalculateInterForce(List<Memo> _memos)
@@ -157,7 +156,7 @@ public class Memo
                 // too far away, attract
                 if (d > maximumDist)
                 {
-                    Vector3 f = dm * (d - maximumDist) / d * 0.05f;
+                    Vector3 f = dm * (d - maximumDist) / d * 0.005f;
                     _memos[i].attractSteer -= f;         
                     _memos[j].attractSteer += f;
 
@@ -182,26 +181,37 @@ public class Memo
         {
             if (memo.sepaCount > 0) memo.interForce += memo.sepaSteer / memo.sepaCount;
             if (memo.attractCount > 0) memo.interForce += memo.attractSteer / memo.attractCount;
+            memo.TrackNucleus();
         }
 
 
     }
 
 
-
-
-
-
-
-
-
-public void Move()
+    public void TrackNucleus()
     {
+        Vector3 dm = nucleus - pos;
+        float d = dm.magnitude;
 
 
+        //dm.Normalize();
+
+        Vector3 f = dm * (Mathf.Exp(-0.00001f * d * d) / d) * 0.5f;
+        interForce += f;
+    }
+
+
+    public void Move()
+    {
         vel *= 0.8f;
-        acc += interForce / m;
+        acc += interForce * m;
         vel += acc;
+        if (vel.magnitude > 2.0f)
+        {
+            vel.Normalize();
+            vel *= 2.0f;
+        }
+
         pos += vel * 0.08f;
         obj.transform.position = pos;
     }
