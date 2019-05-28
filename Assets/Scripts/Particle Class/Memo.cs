@@ -6,13 +6,13 @@ public class Memo
 {
     // shared
     static float maxRadius = 0.2f;
-    static float averageHeight = 0.5f;
+    static float averageHeight = 0.0f;
     public static float range = 0.2f;
 
     public static float maximumDist = 0.3f;
     public static float minimumDist = 0.05f;
 
-    public static Vector3 nucleus = Vector3.zero;
+    public static Vector3 nucleus = new Vector3(0.0f,-0.5f,5.0f);
     public static float centerStrength = 1.0f;
     // self
     public GameObject obj;
@@ -93,16 +93,12 @@ public class Memo
         obj.transform.position = pos;
 
         m = Random.Range(0.01f, 0.03f);
-        obj.transform.localScale = new Vector3(m,m,m);
+        obj.transform.localScale = new Vector3(2.0f*m,2.0f*m,2.0f*m);
 
         target = nucleus;
     }
 
-    // reset when not grabbing
-    public void Reset()
-    {
 
-    }
     
 
     public static void CalculateInterForce(List<Memo> _memos)
@@ -197,7 +193,7 @@ public class Memo
         float d = dm.magnitude;
         if (d > 0.1f)
         {
-            Vector3 f = dm * (Mathf.Exp(-0.001f * d * d) / d) * 15.0f;
+            Vector3 f = dm * (Mathf.Exp(-0.001f * d * d) / d) * 50.0f;
             interForce += f;
         }
 
@@ -208,7 +204,7 @@ public class Memo
     public void Update()
     {
         Vector3 dist = pos - nucleus;
-        if (dist.magnitude > 3.0f)
+        if (dist.magnitude > 1.0f)
         {
             Place();
         }
@@ -229,7 +225,6 @@ public class Memo
         }
 
         pos += vel * 0.08f;
-        Debug.Log(vel.magnitude);
         obj.transform.position = pos;
     }
 

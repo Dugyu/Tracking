@@ -29,8 +29,8 @@ public class DynamicSphere : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Memo.nucleus = MouseInController.SharedInstance.pointOfInterest; 
-        Memo.centerStrength = _strength;
+        Memo.nucleus = FingerTipController.SharedInstance.rayPoint; 
+        //Memo.centerStrength = _strength;
         Memo.CalculateSwarm(memos);
         for (int i = 0; i < memoCount; i++)
         {
